@@ -1105,7 +1105,7 @@ function addon:CreateTimerDisplay()
     if not captchaTimerFrame then
         captchaTimerFrame = CreateFrame("Frame", "CaptchaTimerFrame", UIParent, "BackdropTemplate")
         captchaTimerFrame:SetSize(200, 50)
-        captchaTimerFrame:SetPoint("TOP", 0, -50)
+        captchaTimerFrame:SetPoint("TOP", 0, -350)
         captchaTimerFrame:SetFrameStrata("DIALOG")
         captchaTimerFrame:SetBackdrop({
             bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -1137,33 +1137,29 @@ function addon:StartCountdown()
         countdownTicker = nil
     end
 
-    print("|cffffd200[Captcha]|r Starting countdown with " .. remainingTime .. " seconds.")
-
     -- Start a new countdown ticker
     countdownTicker = C_Timer.NewTicker(1, function()
         if remainingTime > 0 then
             remainingTime = remainingTime - 1
             addon:UpdateTimerDisplay()
-            print("|cffffd200[Captcha]|r Time remaining: " .. remainingTime)
         else
-            print("|cffff0000[Captcha]|r Timer expired, triggering trial reset.")
             addon:ResetTrial() -- Call the trial reset logic
         end
     end, captchaTrialTimer + 1) -- Run the timer one extra iteration to ensure `0` is handled
 end
 
 function addon:ResetTrial()
-    print("|cffff0000[Captcha]|r Resetting the trial...")
+    
 
     -- Forcefully hide CAPTCHA and Timer frames
     if captchaFrame and captchaFrame:IsShown() then
         captchaFrame:Hide()
-        print("|cffff0000[Captcha]|r CAPTCHA frame hidden.")
+        
     end
 
     if captchaTimerFrame and captchaTimerFrame:IsShown() then
         captchaTimerFrame:Hide()
-        print("|cffff0000[Captcha]|r Timer frame hidden.")
+        
     end
 
     -- Reset trial progress
@@ -1173,21 +1169,11 @@ function addon:ResetTrial()
     -- Close any active interaction
     if lastInteractionType == "mail" then
         CloseMail()
-        print("|cffff0000[Captcha]|r MailFrame closed.")
+        
     elseif lastInteractionType == "taxi" then
         if TaxiFrame and TaxiFrame:IsShown() then
             TaxiFrame:Hide()
-            print("|cffff0000[Captcha]|r TaxiFrame closed.")
-        end
-    elseif lastInteractionType == "gossip" then
-        if GossipFrame and GossipFrame:IsShown() then
-            GossipFrame:Hide()
-            print("|cffff0000[Captcha]|r GossipFrame closed.")
-        end
-    elseif lastInteractionType == "quest" then
-        if QuestFrame and QuestFrame:IsShown() then
-            QuestFrame:Hide()
-            print("|cffff0000[Captcha]|r QuestFrame closed.")
+            
         end
     end
 
@@ -1198,7 +1184,7 @@ function addon:ResetTrial()
     if countdownTicker then
         countdownTicker:Cancel()
         countdownTicker = nil
-        print("|cffff0000[Captcha]|r Ticker canceled.")
+        
     end
 end
 
@@ -1326,30 +1312,6 @@ function addon:OnEvent(event, ...)
         else
             print("|cffff0000[Captcha]|r MailFrame not accessible.")
         end
-    elseif event == "GOSSIP_SHOW" then
-        if GossipFrame then
-            if GossipFrame:IsShown() then
-                GossipFrame:Hide()
-                lastInteractionType = "gossip"
-                addon:StartTimedTrial()
-            else
-                print("|cffff0000[Captcha]|r GossipFrame not shown at GOSSIP_SHOW.")
-            end
-        else
-            print("|cffff0000[Captcha]|r GossipFrame not accessible.")
-        end
-    elseif event == "QUEST_DETAIL" then
-        if QuestFrame then
-            if QuestFrame:IsShown() then
-                QuestFrame:Hide()
-                lastInteractionType = "quest"
-                addon:StartTimedTrial()
-            else
-                print("|cffff0000[Captcha]|r QuestFrame not shown at QUEST_DETAIL.")
-            end
-        else
-            print("|cffff0000[Captcha]|r QuestFrame not accessible.")
-        end
     end
 end
 
@@ -1358,10 +1320,6 @@ function addon:ResumeInteraction()
         print("|cffffd200[Captcha]|r Interact with the flight master again.")
     elseif lastInteractionType == "mail" then
         print("|cffffd200[Captcha]|r Interact with the mailbox again.")
-    elseif lastInteractionType == "gossip" then
-        print("|cffffd200[Captcha]|r Interact with the NPC again.")
-    elseif lastInteractionType == "quest" then
-        print("|cffffd200[Captcha]|r Interact with the questgiver again.")
     end
     lastInteractionType = nil
 end
