@@ -1,0 +1,6 @@
+## Interface: 11404
+## Title: FlightCaptcha
+## Author: YourName
+## Version: 1.15.5.57979
+## Notes: Prompts a captcha when talking to a flight master.
+FlightCaptcha.lua
